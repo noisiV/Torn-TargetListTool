@@ -313,6 +313,174 @@ footer a:hover{color:var(--accent);}
   .main{padding:0.75rem;}
   #apiKey{width:100%;}
 }
+
+/* ─────────────────────────────────────────────────────
+   BOND BARREL ANIMATION
+───────────────────────────────────────────────────── */
+.bond-barrel-wrap {
+  position: relative;
+  width: 44px; height: 44px;
+  flex-shrink: 0;
+}
+.bond-barrel {
+  width: 44px; height: 44px;
+  filter: drop-shadow(0 0 8px var(--accent-glow));
+}
+.bond-figure {
+  position: absolute;
+  top: 50%; left: -60px;
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+}
+.bond-person {
+  width: 20px; height: 44px;
+  filter: drop-shadow(0 0 3px var(--accent-glow));
+}
+/* Walk cycle — legs alternate */
+@keyframes bond-leg-l {
+  0%,100% { transform-origin: 10px 19px; transform: rotate(-20deg); }
+  50%      { transform-origin: 10px 19px; transform: rotate(20deg); }
+}
+@keyframes bond-leg-r {
+  0%,100% { transform-origin: 10px 19px; transform: rotate(20deg); }
+  50%      { transform-origin: 10px 19px; transform: rotate(-20deg); }
+}
+.bond-person .bond-leg-l { animation: bond-leg-l 0.38s ease-in-out infinite; }
+.bond-person .bond-leg-r { animation: bond-leg-r 0.38s ease-in-out infinite; }
+
+/* Walk in from left, reach centre, raise gun, pause, walk off right */
+@keyframes bond-walk {
+  0%   { left: -60px; opacity: 1; }
+  40%  { left: 12px;  opacity: 1; }   /* arrives at barrel centre */
+  55%  { left: 12px;  opacity: 1; }   /* pauses, raises gun */
+  100% { left: 80px;  opacity: 0; }   /* walks off right */
+}
+/* Arm raises when he stops */
+@keyframes bond-arm {
+  0%,38% { transform: rotate(0deg); }
+  50%    { transform: rotate(-30deg); }
+  60%    { transform: rotate(-30deg); }
+  100%   { transform: rotate(0deg); }
+}
+.bond-person .bond-arm-up { transform-origin: 13px 10px; animation: bond-arm 0s; }
+
+/* Blood drip from bottom of barrel */
+.bond-drip {
+  position: absolute;
+  bottom: -2px; left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background: linear-gradient(to bottom, #c8000a, transparent);
+  border-radius: 0 0 2px 2px;
+  height: 0;
+  opacity: 0;
+}
+@keyframes bond-drip {
+  0%   { height: 0;    opacity: 0; }
+  10%  { height: 0;    opacity: 1; }
+  60%  { height: 18px; opacity: 1; }
+  100% { height: 20px; opacity: 0; }
+}
+
+/* Trigger the full sequence */
+.bond-figure.playing {
+  animation: bond-walk 2.4s cubic-bezier(0.25, 0, 0.75, 1) forwards;
+}
+.bond-figure.playing .bond-arm-up {
+  animation: bond-arm 2.4s forwards;
+}
+.bond-drip.playing {
+  animation: bond-drip 1.6s 1.35s ease-out forwards;
+}
+
+/* ─────────────────────────────────────────────────────
+   RESPONSIVE — TABLET (≤ 900px)
+───────────────────────────────────────────────────── */
+@media(max-width:900px){
+  .header-top { flex-direction:column; align-items:flex-start; gap:0.6rem; padding:0.7rem 1rem; }
+  .header-controls { width:100%; flex-wrap:wrap; gap:0.4rem; }
+  .input-group { flex:1 1 auto; min-width:0; }
+  #apiKey { width:100%; }
+  .main { padding:0.6rem 1rem 2rem; }
+  .list-tabs-wrap { padding:0.4rem 1rem; }
+  .filter-row { padding:0.4rem 0; gap:0.5rem; }
+}
+
+/* ─────────────────────────────────────────────────────
+   RESPONSIVE — MOBILE (≤ 600px)
+───────────────────────────────────────────────────── */
+@media(max-width:600px){
+  .logo-svg { width:34px; height:34px; }
+  .bond-barrel-wrap { width:34px; height:34px; }
+  .logo-name { font-size:1rem; }
+  .logo-sub  { display:none; }
+  .header-top { padding:0.55rem 0.75rem; }
+  .main { padding:0.4rem 0.6rem 2rem; }
+  .list-tabs-wrap { padding:0.3rem 0.6rem; }
+
+  /* Hide full table, show card list */
+  .table-wrap table { display:none; }
+  .card-list { display:block !important; }
+
+  .t-card {
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-left:3px solid var(--accent-dim);
+    padding:0.55rem 0.75rem 0.5rem;
+    margin-bottom:4px;
+    display:flex;
+    flex-direction:column;
+    gap:0.4rem;
+  }
+  .t-card.hosp-card { border-left-color:var(--accent); background:rgba(200,0,10,0.025); }
+
+  .t-card-top {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:0.5rem;
+    min-width:0;
+  }
+  .t-card-name {
+    display:flex; align-items:center; gap:0.4rem;
+    min-width:0; flex:1;
+  }
+  .t-card-name .player-link { font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .t-card-top .btn-atk { font-size:0.68rem; padding:0.26rem 0.65rem; flex-shrink:0; }
+
+  .t-card-stats {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    border:1px solid rgba(255,255,255,0.05);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .t-stat {
+    display:flex; flex-direction:column; gap:2px;
+    padding:0.28rem 0.45rem;
+    border-right:1px solid rgba(255,255,255,0.05);
+  }
+  .t-stat:last-child { border-right:none; }
+  .t-stat-label {
+    font-family:var(--mono); font-size:0.5rem;
+    letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--text-dim); line-height:1;
+  }
+  .t-stat-val {
+    font-family:var(--mono); font-size:0.65rem;
+    color:var(--text-bright); line-height:1.2;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .t-stat-val .status-pill { font-size:0.57rem; padding:1px 5px; }
+  .t-stat-val .online-dot  { width:4px; height:4px; }
+
+  .result-count { display:none; }
+  .filter-row .chips { gap:0.25rem; }
+}
+
+.card-list { display:none; }
 </style>
 </head>
 <body>
@@ -320,30 +488,49 @@ footer a:hover{color:var(--accent);}
 <!-- HEADER -->
 <header class="header">
   <div class="header-top">
-    <a class="logo" href="#">
-      <!-- EYE / CROSSHAIR LOGO -->
-      <svg class="logo-svg" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- outer ring -->
-        <circle cx="22" cy="22" r="20" stroke="#c8000a" stroke-width="1.2" opacity="0.4"/>
-        <!-- crosshair lines -->
-        <line x1="22" y1="2"  x2="22" y2="10" stroke="#c8000a" stroke-width="1.5"/>
-        <line x1="22" y1="34" x2="22" y2="42" stroke="#c8000a" stroke-width="1.5"/>
-        <line x1="2"  y1="22" x2="10" y2="22" stroke="#c8000a" stroke-width="1.5"/>
-        <line x1="34" y1="22" x2="42" y2="22" stroke="#c8000a" stroke-width="1.5"/>
-        <!-- inner ring -->
-        <circle cx="22" cy="22" r="10" stroke="#c8000a" stroke-width="1.2"/>
-        <!-- eye shape -->
-        <path d="M10 22 Q22 12 34 22 Q22 32 10 22Z" fill="none" stroke="#ff2233" stroke-width="1.2" opacity="0.7"/>
-        <!-- iris -->
-        <circle cx="22" cy="22" r="5" stroke="#ff2233" stroke-width="1.2"/>
-        <!-- pupil -->
-        <circle cx="22" cy="22" r="2.5" fill="#c8000a" opacity="0.9"/>
-        <!-- tick marks -->
-        <line x1="22" y1="12" x2="22" y2="14" stroke="#c8000a" stroke-width="1" opacity="0.6"/>
-        <line x1="22" y1="30" x2="22" y2="32" stroke="#c8000a" stroke-width="1" opacity="0.6"/>
-        <line x1="12" y1="22" x2="14" y2="22" stroke="#c8000a" stroke-width="1" opacity="0.6"/>
-        <line x1="30" y1="22" x2="32" y2="22" stroke="#c8000a" stroke-width="1" opacity="0.6"/>
-      </svg>
+    <a class="logo" href="https://torn.netgangster.com" target="_blank">
+      <!-- BOND BARREL LOGO -->
+      <div class="bond-barrel-wrap">
+        <svg class="logo-svg bond-barrel" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- rifling rings -->
+          <circle cx="22" cy="22" r="21" stroke="#c8000a" stroke-width="0.8" opacity="0.3"/>
+          <circle cx="22" cy="22" r="16" stroke="#c8000a" stroke-width="0.6" opacity="0.25"/>
+          <circle cx="22" cy="22" r="10" stroke="#c8000a" stroke-width="0.8" opacity="0.4"/>
+          <circle cx="22" cy="22" r="5"  stroke="#ff2233" stroke-width="1" opacity="0.7"/>
+          <!-- crosshair -->
+          <line x1="22" y1="1"  x2="22" y2="9"  stroke="#c8000a" stroke-width="1.4"/>
+          <line x1="22" y1="35" x2="22" y2="43" stroke="#c8000a" stroke-width="1.4"/>
+          <line x1="1"  y1="22" x2="9"  y2="22" stroke="#c8000a" stroke-width="1.4"/>
+          <line x1="35" y1="22" x2="43" y2="22" stroke="#c8000a" stroke-width="1.4"/>
+          <!-- tiny ticks -->
+          <line x1="22" y1="11" x2="22" y2="13" stroke="#c8000a" stroke-width="0.8" opacity="0.5"/>
+          <line x1="22" y1="31" x2="22" y2="33" stroke="#c8000a" stroke-width="0.8" opacity="0.5"/>
+          <line x1="11" y1="22" x2="13" y2="22" stroke="#c8000a" stroke-width="0.8" opacity="0.5"/>
+          <line x1="31" y1="22" x2="33" y2="22" stroke="#c8000a" stroke-width="0.8" opacity="0.5"/>
+          <!-- centre pupil glow -->
+          <circle cx="22" cy="22" r="2.5" fill="#c8000a" opacity="0.9"/>
+        </svg>
+        <!-- Walking silhouette — James Bond barrel sequence -->
+        <div class="bond-figure" id="bondFigure">
+          <svg class="bond-person" viewBox="0 0 20 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- head -->
+            <circle cx="10" cy="4" r="3.2" fill="#c8000a"/>
+            <!-- body -->
+            <rect x="7" y="8" width="6" height="11" rx="1" fill="#c8000a"/>
+            <!-- arm up (gun arm) -->
+            <line x1="13" y1="10" x2="20" y2="6" stroke="#c8000a" stroke-width="2" stroke-linecap="round" class="bond-arm-up"/>
+            <!-- arm down -->
+            <line x1="7" y1="11" x2="3" y2="16" stroke="#c8000a" stroke-width="2" stroke-linecap="round"/>
+            <!-- gun -->
+            <rect x="20" y="4.5" width="7" height="2" rx="0.5" fill="#c8000a" class="bond-arm-up"/>
+            <!-- legs walk -->
+            <line x1="10" y1="19" x2="7"  y2="30" stroke="#c8000a" stroke-width="2.2" stroke-linecap="round" class="bond-leg-l"/>
+            <line x1="10" y1="19" x2="13" y2="30" stroke="#c8000a" stroke-width="2.2" stroke-linecap="round" class="bond-leg-r"/>
+          </svg>
+        </div>
+        <!-- blood drip -->
+        <div class="bond-drip" id="bondDrip"></div>
+      </div>
       <div class="logo-text">
         <div class="logo-name"><span>x0Vision</span>'s Master Target List</div>
         <div class="logo-sub">Torn City · Intel &amp; Status Database</div>
@@ -418,6 +605,7 @@ footer a:hover{color:var(--accent);}
       </tbody>
     </table>
   </div>
+  <div class="card-list" id="cardList"></div>
 </main>
 
 <footer>
@@ -7356,6 +7544,7 @@ function markTabFetched(idx) {
 async function startFetch() {
   const key = document.getElementById('apiKey').value.trim();
   if (!key) { alert('Enter your Torn API key first.'); return; }
+  localStorage.setItem('x0v_targets_apiKey', key);
   if (fetchActive) return;
 
   fetchActive   = true;
@@ -7588,6 +7777,71 @@ function renderTable() {
     </tr>`;
   }).join('');
 
+  renderCards(players);
+}
+
+function renderCards(players) {
+  const cardList = document.getElementById('cardList');
+  if (!cardList) return;
+
+  if (players.length === 0) {
+    cardList.innerHTML = '';
+    return;
+  }
+
+  cardList.innerHTML = players.map(p => {
+    const s       = statusCache[p.id];
+    const isHosp  = s?.status === 'hospital';
+    const bsVal   = FFS_DATA[p.id]?.[0] ?? null;
+    const estTxt  = bsVal !== null ? fmtBs(bsVal) : '—';
+
+    // Status pill text
+    const stMap = { okay:'Okay', hospital:'Hospital', jail:'Jail', traveling:'Traveling', federal:'Federal', dead:'Dead' };
+    const stLabel = s ? (stMap[s.status] || s.status || 'Unknown') : '—';
+
+    // Online dot + text inline
+    const onlineHtml = s ? onlineCell(p.id) : '<span style="color:var(--text-dim)">—</span>';
+
+    // Hosp time or last online
+    const timeLabel = isHosp ? 'TIME LEFT' : 'ONLINE';
+    const timeVal   = isHosp
+      ? (() => {
+          const secs = (s.until || 0) - Math.floor(Date.now()/1000);
+          if (secs <= 0) return '<span style="color:var(--green)">Free</span>';
+          const hh = Math.floor(secs/3600);
+          const mm = Math.floor((secs%3600)/60);
+          const ss = secs%60;
+          return hh>0 ? `${hh}h ${mm}m` : mm>0 ? `${mm}m ${ss}s` : `${ss}s`;
+        })()
+      : onlineHtml;
+
+    return `<div class="t-card${isHosp ? ' hosp-card' : ''}">
+      <div class="t-card-top">
+        <div class="t-card-name">
+          <a class="player-link" href="https://www.torn.com/profiles.php?XID=${p.id}" target="_blank">${esc(p.name)}</a>
+        </div>
+        <a class="btn-atk" href="https://www.torn.com/loader.php?sid=attack&user2ID=${p.id}" target="_blank">Attack</a>
+      </div>
+      <div class="t-card-stats">
+        <div class="t-stat">
+          <span class="t-stat-label">Status</span>
+          <span class="t-stat-val">${s ? statusCell(p.id) : '<span style="color:var(--text-dim)">—</span>'}</span>
+        </div>
+        <div class="t-stat">
+          <span class="t-stat-label">Level</span>
+          <span class="t-stat-val">${p.level}</span>
+        </div>
+        <div class="t-stat">
+          <span class="t-stat-label">Est. Stats</span>
+          <span class="t-stat-val">${estTxt}</span>
+        </div>
+        <div class="t-stat">
+          <span class="t-stat-label">${timeLabel}</span>
+          <span class="t-stat-val">${timeVal}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function updateListInfo() {
@@ -7619,6 +7873,36 @@ function fixStickyThead() {
 init();
 requestAnimationFrame(fixStickyThead);
 window.addEventListener("resize", fixStickyThead);
+
+// Restore saved API key
+(function() {
+  const saved = localStorage.getItem('x0v_targets_apiKey');
+  if (saved) {
+    document.getElementById('apiKey').value = saved;
+  }
+})();
+
+// Bond barrel animation — triggers occasionally on a random interval
+function triggerBond() {
+  const fig  = document.getElementById('bondFigure');
+  const drip = document.getElementById('bondDrip');
+  if (!fig || !drip) return;
+
+  // Reset
+  fig.classList.remove('playing');
+  drip.classList.remove('playing');
+
+  // Small delay before restarting so animation resets cleanly
+  void fig.offsetWidth;
+  fig.classList.add('playing');
+  drip.classList.add('playing');
+
+  // Schedule next trigger: random 12–28s
+  const next = 12000 + Math.random() * 16000;
+  setTimeout(triggerBond, next);
+}
+// First trigger after a short delay so page has loaded
+setTimeout(triggerBond, 2200 + Math.random() * 2000);
 </script>
 </body>
 </html>
